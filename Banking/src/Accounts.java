@@ -16,6 +16,7 @@ public class Accounts {
 	private static ArrayList <Transaction> transactionslist = new ArrayList <Transaction>(); 
 	public ArrayList<Accounts> getAccountslist() {
 		return getAccountslist();
+		
 	}
 	public void setAccountslist(ArrayList<Accounts> accountslist2) {
 		accountslist = accountslist2;

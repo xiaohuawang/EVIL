@@ -11,12 +11,12 @@ public class Banking {
 		System.out.println();
 		// variables decelerations
 		Scanner keyboard = new Scanner(System.in);
-		String choice = "", tranchoice = "", choiceToclose = "";
+		String choice = "", tranchoice = "";
+		boolean choiceToclose = false;
 		int accountNo = 0;
 		Accounts acc = new Accounts();
 		HashMap<Integer, String> accountsHash = new HashMap<Integer, String>();
 		HashMap<Integer, String> transactionsHash = new HashMap<Integer, String>();
-		// ArrayList <Accounts> accList = new ArrayList <Accounts>();
 		String filename = (System.getProperty("user.dir") + File.separatorChar + "accounts.txt");
 		String filename2 = (System.getProperty("user.dir") + File.separatorChar + "transactions.txt");
 		accountsHash = readLines(new File(filename), accountsHash);
@@ -29,11 +29,11 @@ public class Banking {
 				System.out.println("The balance for account " + key + " is "
 						+ accountsHash.get(key));
 			}
-			choiceToclose = Validator.getString(keyboard,
+			choiceToclose = Validator.getBoolean(keyboard,
 					"Do you want to close an existing account? (y/n) : " );
 			int account = Validator.getInt(keyboard,
 					"Enter an account # or -1 to stop entering accounts : ");
-			if(choiceToclose.equalsIgnoreCase("y"))
+			if(choiceToclose)
 			{
 				if (account != -1) 
 				{
@@ -64,24 +64,30 @@ public class Banking {
 					break;
 				}
 			}
-			else if(choiceToclose.equalsIgnoreCase("n"))
+			else 
 			{
 			if (account != -1) {
+				if(accountsHash.containsKey(account))
+				{
+					System.out.println("This account is alrady exist!");
+					break;
+				}
+				else
+				{
 				String accountName = Validator.getString(keyboard,
 						"Enter the name for acct # " + account + " : ");
 				double accountBalance = Validator.getDouble(keyboard,
 						"Enter the balance for acct #  " + account + " : ", 0,
 						Double.MAX_VALUE);
 				acc.addAcount(account, accountName, accountBalance);
-				// accList.add(acc);
 				accountsHash.put(acc.getAccount(), "	" + acc.getAccountName()
 						+ " " + acc.getAccountBalance());
 				acc = new Accounts();
+				}
 			} else
 				choice = "-1";
 			}
-			else
-				System.out.println("Y /N !!!!");
+			
 		}
 		System.out.println();
 		transactionsHash = readLines(new File(filename2), transactionsHash);
