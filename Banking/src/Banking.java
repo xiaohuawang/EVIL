@@ -25,6 +25,10 @@ public class Banking {
 
 			System.out.println("Please create the user account(s)");
 			System.out.println();
+			for (Integer key : accountsHash.keySet()) {
+				System.out.println("The balance for account " + key + " is "
+						+ accountsHash.get(key));
+			}
 			choiceToclose = Validator.getString(keyboard,
 					"Do you want to close an existing account? (y/n) : " );
 			int account = Validator.getInt(keyboard,
@@ -40,7 +44,13 @@ public class Banking {
 						double balance =Double.parseDouble(Key_value_pair[Key_value_pair.length - 1]);
 						if(balance == 0)
 						{
-							accountsHash.remove(account);
+							accountsHash.remove(account, accountsHash.get(account));
+							System.out.println("Account " +account +" was closed");
+							for (Integer key : accountsHash.keySet()) {
+								System.out.println("The balance for account " + key + " is "
+										+ accountsHash.get(key));
+								writeHashMap(accountsHash, filename);
+							}
 						}
 						else
 							System.out.println("Cannot delete this accout beacause it has $" +balance);
@@ -54,7 +64,7 @@ public class Banking {
 					break;
 				}
 			}
-			else
+			else if(choiceToclose.equalsIgnoreCase("n"))
 			{
 			if (account != -1) {
 				String accountName = Validator.getString(keyboard,
@@ -70,13 +80,12 @@ public class Banking {
 			} else
 				choice = "-1";
 			}
+			else
+				System.out.println("Y /N !!!!");
 		}
 		System.out.println();
 		transactionsHash = readLines(new File(filename2), transactionsHash);
-		for (Integer key : accountsHash.keySet()) {
-			System.out.println("The balance for account " + key + " is "
-					+ accountsHash.get(key));
-		}
+		
 		while (!tranchoice.equals("-1")) {
 
 			String transaction = Validator
