@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -100,6 +101,8 @@ public class Accounts {
 	
 	public void sub(double amount)
 	{
+		if(amount< 0)
+			amount= -1*amount;
 		this.accountBalance -= amount;
 		if(this.accountBalance < 0)
 			this.accountBalance -= 35;
@@ -114,17 +117,39 @@ public class Accounts {
 	{
 		
 		transactionslist = transactionHash.get(account);
+		for(Transaction t : transactionslist)
+		{
+			if(t.getTransactionType() !="deposit")
+				t.setAmount(-1*t.getAmount());
+		}
+		transactionHash.replace(account,transactionslist);
+		
 		if(transactionslist.size()>1)
+		{
+			{
+				Collections.sort(transactionslist, new Comparator<Transaction>()
+						{ 
+					@Override
+					  public int compare(Transaction o1, Transaction o2) {					     
+					      return Double.compare(o1.getAmount(),o2.getAmount());
+					  }
+					});
+				
+			}
+			//Sort by date 
+		/*
+	if(transactionslist.size()>1)
 		{
 		Collections.sort(transactionslist, new Comparator<Transaction>()
 				{
 			  public int compare(Transaction o1, Transaction o2) {
-			      if (o1.getTranDate() == null || o2.getTranDate() == null)
+			      if (o1.getTranDate() == null || o2.getTranDate() == null)	
 			        return 0;
 			      return o1.getTranDate().compareTo(o2.getTranDate());
 			  }
 			});
 		}
+		*/
 		if(transactionslist.size()>0)
 		{
 			System.out.println("********************Transactions********************");
@@ -136,7 +161,7 @@ public class Accounts {
 		}
 		System.out.println();
 		}
-		
+		}
 	}
 	public Accounts getAccount(int accountNo)
 	{
