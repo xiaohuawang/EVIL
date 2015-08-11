@@ -1,8 +1,6 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
@@ -26,7 +24,7 @@ public class Accounts {
 		return transactionHash;
 	}
 	public void setTransactionList(HashMap<Integer,  ArrayList <Transaction>> transactionList) {
-		this.transactionHash = transactionList;
+		transactionHash = transactionList;
 	}
 
 	private static HashMap <Integer , ArrayList <Transaction>> transactionHash = new HashMap <Integer,  ArrayList <Transaction>>();
@@ -68,7 +66,7 @@ public class Accounts {
 		accountslist.add(this);
 	}
 	
-	public void addTran(String tranType, int accountNo, double amount, GregorianCalendar tranDate)
+	public String addTran(String tranType, int accountNo, double amount, GregorianCalendar tranDate)
 	{
 		Transaction tran = new Transaction();
 		tran.setAmount(amount);
@@ -86,8 +84,10 @@ public class Accounts {
 			transactionslist.add(tran);
 		transactionHash.put(accountNo,transactionslist);
 		}
-	
+		return tran.getTransactionType();
 	}
+	
+	
 	public void updateBalance(String tranType, double amount)
 	{
 		switch(tranType)
@@ -113,10 +113,16 @@ public class Accounts {
 		this.accountBalance += amount;
 	}
 	
-	public void runTransactions()
+	public boolean runTransactions(int accountNo)
 	{
+		boolean isExist = false;
+		if(transactionHash.containsKey(accountNo))
+		{
+			transactionslist = transactionHash.get(accountNo);
 		
-		transactionslist = transactionHash.get(account);
+		if(transactionslist.size()>0 )
+		{
+			isExist= true;
 		for(Transaction t : transactionslist)
 		{
 			if(t.getTransactionType() !="deposit")
@@ -124,8 +130,7 @@ public class Accounts {
 		}
 		transactionHash.replace(account,transactionslist);
 		
-		if(transactionslist.size()>1)
-		{
+		
 			{
 				Collections.sort(transactionslist, new Comparator<Transaction>()
 						{ 
@@ -150,8 +155,13 @@ public class Accounts {
 			});
 		}
 		*/
-		if(transactionslist.size()>0)
-		{
+			
+		}
+		}
+		return isExist;
+	}
+		public void printTransactions(){
+		
 			System.out.println("********************Transactions********************");
 			System.out.println("Transaction Type    	     Amount			Date");
 		for(Transaction tran :transactionslist)
@@ -160,8 +170,7 @@ public class Accounts {
 			updateBalance(tran.getTransactionType(), tran.getAmount());
 		}
 		System.out.println();
-		}
-		}
+
 	}
 	public Accounts getAccount(int accountNo)
 	{
@@ -172,6 +181,6 @@ public class Accounts {
 				 return account;
 			}
 		}
-		return null;
+		return new Accounts();
 	}
 }
