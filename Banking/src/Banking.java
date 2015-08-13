@@ -4,7 +4,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Properties;
@@ -13,36 +12,7 @@ import java.util.Scanner;
 public class Banking {
 
 	public static void main(String[] args) {
-		
-		 String url = "jdbc:oracle:thin:testuser/password@localhost"; 
-	      
-	        //properties for creating connection to Oracle database
-	        Properties props = new Properties();
-	        props.setProperty("user", "testdb");
-	        props.setProperty("password", "password");
-	      
-	        //creating connection to Oracle database using JDBC
-	        try {
-				Connection conn = DriverManager.getConnection(url,props);
-				
-				 String sql ="select * from accounts";
-				   PreparedStatement preStatement = conn.prepareStatement(sql);
-				    
-			        ResultSet result = preStatement.executeQuery();
-			      
-			        while(result.next()){
-			            System.out.printf("%s\n",
-			            		result.getString("ACCOUNTNUMBER"));
-			            }
 
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		
-		System.out.println("Welcome to Evil Corp Saving and Loan");
-		System.out.println();
 		// variables decelerations
 		Scanner keyboard = new Scanner(System.in);
 		String choice = "", tranchoice = "";
@@ -51,87 +21,117 @@ public class Banking {
 		Accounts acc = new Accounts();
 		HashMap<Integer, String> accountsHash = new HashMap<Integer, String>();
 		HashMap<Integer, String> transactionsHash = new HashMap<Integer, String>();
-		String filename = (System.getProperty("user.dir") + File.separatorChar + "accounts.txt");
-		String filename2 = (System.getProperty("user.dir") + File.separatorChar + "transactions.txt");
-	//	accountsHash = readLines(new File(filename), accountsHash);
-
-
-     
-            
-		
-		while (!choice.equals("-1")) {
-
-			System.out.println("Please create the user account(s)");
-			System.out.println();
-			/*for (Integer key : accountsHash.keySet()) {
-				System.out.println("The balance for account " + key + " is "
-						+ accountsHash.get(key));
-			}*/
-			
-			
-			choiceToclose = Validator.getBoolean(keyboard,
-					"Do you want to close an existing account? (y/n) : " );
-			int account = Validator.getInt(keyboard,
-					"Enter an account # or -1 to stop entering accounts : ");
-			if(choiceToclose)
-			{
-				if (account != -1) 
-				{
-					if(accountsHash.containsKey(account))
-					{
-						String[] Key_value_pair = accountsHash.get(account)
-								.split(" ");
-						double balance =Double.parseDouble(Key_value_pair[Key_value_pair.length - 1]);
-						if(balance == 0)
-						{
-							accountsHash.remove(account, accountsHash.get(account));
-							System.out.println("Account " +account +" was closed");
-							for (Integer key : accountsHash.keySet()) {
-								System.out.println("The balance for account " + key + " is "
-										+ accountsHash.get(key));
-								writeHashMap(accountsHash, filename);
-							}
-						}
-						else
-							System.out.println("Cannot delete this accout beacause it has $" +balance);
-					}
-					else
-						System.out.println("This account does not exist!");
-				}
-				else
-				{
-					choice = "-1";
-					break;
-				}
-			}
-			else 
-			{
-			if (account != -1) {
-				if(accountsHash.containsKey(account))
-				{
-					System.out.println("This account is alrady exist!");
-					break;
-				}
-				else
-				{
-				String accountName = Validator.getString(keyboard,
-						"Enter the name for acct # " + account + " : ");
-				double accountBalance = Validator.getDouble(keyboard,
-						"Enter the balance for acct #  " + account + " : ", 0,
-						Double.MAX_VALUE);
-				acc.addAcount(account, accountName, accountBalance);
-				accountsHash.put(acc.getAccount(), "	" + acc.getAccountName()
-						+ " " + acc.getAccountBalance());
-				acc = new Accounts();
-				}
-			} else
-				choice = "-1";
-			}
-			
-		}
+		String sql = "";
+		PreparedStatement preStatement = null;
+		ResultSet result = null;
+		System.out.println("Welcome to Evil Corp Saving and Loan");
 		System.out.println();
-		transactionsHash = readLines(new File(filename2), transactionsHash);
-		
+
+		String url = "jdbc:oracle:thin:testuser/password@localhost";
+
+		// properties for creating connection to Oracle database
+		Properties props = new Properties();
+		props.setProperty("user", "testdb");
+		props.setProperty("password", "password");
+
+		// creating connection to Oracle database using JDBC
+		try {
+			Connection conn = DriverManager.getConnection(url, props);
+
+			sql = "select * from accounts";
+			preStatement = conn.prepareStatement(sql);
+			result = preStatement.executeQuery();
+
+			while (result.next())
+			{
+				accountsHash.put(Integer.parseInt(result.getString("ACCOUNTNUMBER")),result.getString("ACCOUNTNAME") +" " +result.getString("STARTINGBALENCE"));
+				System.out.printf("%s\t%s\t%s\n",
+						result.getString("ACCOUNTNUMBER"),
+						result.getString("ACCOUNTNAME"),
+						result.getString("STARTINGBALENCE"));
+			}
+
+			while (!choice.equals("-1"))
+			{
+				choiceToclose = Validator.getBoolean(keyboard,
+						"Do you want to close an existing account? (y/n) : ");
+				int account = Validator
+						.getInt(keyboard,
+								"Enter an account # or -1 to stop entering accounts : ");
+				if (choiceToclose) {
+					if (account != -1) {
+
+						if (accountsHash.containsKey(account)) {
+							String[] Key_value_pair = accountsHash.get(account)
+									.split(" ");
+							double balance = Double
+									.parseDouble(Key_value_pair[Key_value_pair.length - 1]);
+							if (balance == 0) {
+								accountsHash.remove(account,
+										accountsHash.get(account));
+								
+								/// add delete the account here
+							/*	System.out.println("Account " + account
+										+ " was closed");
+								for (Integer key : accountsHash.keySet()) {
+									System.out
+											.println("The balance for account "
+													+ key + " is "
+													+ accountsHash.get(key));
+									// writeHashMap(accountsHash, filename);
+								}
+								*/
+							} else
+								System.out
+										.println("Cannot delete this accout beacause it has $"
+												+ balance);
+						} else
+							System.out.println("This account does not exist!");
+					} else {
+						choice = "-1";
+						break;
+					}
+				} else {
+					if (account != -1) {
+						if (accountsHash.containsKey(account)) {
+							System.out.println("This account is alrady exist!");
+							break;
+						} else {
+							String accountName = Validator.getString(keyboard,
+									"Enter the name for acct # " + account
+											+ " : ");
+							double accountBalance = Validator.getDouble(
+									keyboard, "Enter the balance for acct #  "
+											+ account + " : ", 0,
+									Double.MAX_VALUE);
+							acc.addAcount(account, accountName, accountBalance);
+							accountsHash.put(
+									acc.getAccount(),
+									"	" + acc.getAccountName() + " "
+											+ acc.getAccountBalance());
+						//	sql = "insert into accounts (accountNumber,accountName,accountType,startingBalence)values('"+acc.getAccount()+"',' "+acc.getAccountName()+"','Checking','"+acc.getAccountBalance()+",)";
+							
+							sql = "insert into accounts (accountNumber,accountName,accountType,startingBalence)values('99','Weaam','Checking',900)";
+							
+							preStatement = conn.prepareStatement(sql);
+							result = preStatement.executeQuery();
+							
+							acc = new Accounts();
+						}
+					} else
+						choice = "-1";
+				}
+
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println();
+		// transactionsHash = readLines(new File(filename2), transactionsHash);
+
 		while (!tranchoice.equals("-1")) {
 
 			String transaction = Validator
@@ -179,8 +179,9 @@ public class Banking {
 			System.out.println();
 			for (Integer key : accountsHash.keySet()) {
 				if (acc.runTransactions((int) key)) {
-					System.out.println("The balance for account " + key +" for " + acc.getAccountName()
-							+ " is " + acc.getAccountBalance());
+					System.out.println("The balance for account " + key
+							+ " for " + acc.getAccountName() + " is "
+							+ acc.getAccountBalance());
 				} else {
 					System.out.println("The balance for account " + key
 							+ " is " + accountsHash.get(key));
@@ -189,8 +190,8 @@ public class Banking {
 			}
 		}
 
-		writeHashMap(accountsHash, filename);
-		writeHashMap(transactionsHash, filename2);
+		// writeHashMap(accountsHash, filename);
+		// writeHashMap(transactionsHash, filename2);
 	}
 
 	public static HashMap<Integer, String> readLines(File file,
