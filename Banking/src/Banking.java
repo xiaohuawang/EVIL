@@ -38,11 +38,11 @@ public class Banking {
 		try {
 			Connection conn = DriverManager.getConnection(url, props);
 
-			sql = "select * from accounts";
+					sql = "select * from ACCOUNTS";
 			preStatement = conn.prepareStatement(sql);
 			result = preStatement.executeQuery();
 
-			while (result.next())
+		while (result.next())
 			{
 				accountsHash.put(Integer.parseInt(result.getString("ACCOUNTNUMBER")),result.getString("ACCOUNTNAME") +" " +result.getString("STARTINGBALENCE"));
 				System.out.printf("%s\t%s\t%s\n",
@@ -50,7 +50,6 @@ public class Banking {
 						result.getString("ACCOUNTNAME"),
 						result.getString("STARTINGBALENCE"));
 			}
-
 			while (!choice.equals("-1"))
 			{
 				choiceToclose = Validator.getBoolean(keyboard,
@@ -110,12 +109,12 @@ public class Banking {
 									"	" + acc.getAccountName() + " "
 											+ acc.getAccountBalance());
 						//	sql = "insert into accounts (accountNumber,accountName,accountType,startingBalence)values('"+acc.getAccount()+"',' "+acc.getAccountName()+"','Checking','"+acc.getAccountBalance()+",)";
-							
+					/*		
 							sql = "insert into accounts (accountNumber,accountName,accountType,startingBalence)values('99','Weaam','Checking',900)";
 							
 							preStatement = conn.prepareStatement(sql);
 							result = preStatement.executeQuery();
-							
+							*/
 							acc = new Accounts();
 						}
 					} else
