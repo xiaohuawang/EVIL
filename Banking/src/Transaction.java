@@ -6,6 +6,7 @@ public class Transaction {
 	private String transactionType;
 	private double amount;
 	private GregorianCalendar tranDate;
+	
 	public String getTransactionType() {
 		return transactionType;
 	}

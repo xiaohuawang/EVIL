@@ -1,12 +1,46 @@
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class Banking {
 
 	public static void main(String[] args) {
+		
+		 String url = "jdbc:oracle:thin:testuser/password@localhost"; 
+	      
+	        //properties for creating connection to Oracle database
+	        Properties props = new Properties();
+	        props.setProperty("user", "testdb");
+	        props.setProperty("password", "password");
+	      
+	        //creating connection to Oracle database using JDBC
+	        try {
+				Connection conn = DriverManager.getConnection(url,props);
+				
+				 String sql ="select * from accounts";
+				   PreparedStatement preStatement = conn.prepareStatement(sql);
+				    
+			        ResultSet result = preStatement.executeQuery();
+			      
+			        while(result.next()){
+			            System.out.printf("%s\n",
+			            		result.getString("ACCOUNTNUMBER"));
+			            }
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		
 		System.out.println("Welcome to Evil Corp Saving and Loan");
 		System.out.println();
 		// variables decelerations
@@ -19,16 +53,22 @@ public class Banking {
 		HashMap<Integer, String> transactionsHash = new HashMap<Integer, String>();
 		String filename = (System.getProperty("user.dir") + File.separatorChar + "accounts.txt");
 		String filename2 = (System.getProperty("user.dir") + File.separatorChar + "transactions.txt");
-		accountsHash = readLines(new File(filename), accountsHash);
+	//	accountsHash = readLines(new File(filename), accountsHash);
 
+
+     
+            
+		
 		while (!choice.equals("-1")) {
 
 			System.out.println("Please create the user account(s)");
 			System.out.println();
-			for (Integer key : accountsHash.keySet()) {
+			/*for (Integer key : accountsHash.keySet()) {
 				System.out.println("The balance for account " + key + " is "
 						+ accountsHash.get(key));
-			}
+			}*/
+			
+			
 			choiceToclose = Validator.getBoolean(keyboard,
 					"Do you want to close an existing account? (y/n) : " );
 			int account = Validator.getInt(keyboard,
